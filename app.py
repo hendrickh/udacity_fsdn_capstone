@@ -54,17 +54,17 @@ def create_app(test_config=None):
     @app.route('/movies/<int:id>', methods=['DELETE'])
 #    @requires_auth('delete:movie')
     def delete_movie(id):
-        try:
-            movie = Movie.query.filter_by(id=id).one_or_none()
-            print("OMG WHY")
-            if not movie:
-                abort(404)
+        movie = Movie.query.filter(Movie.id == id).one_or_none()
 
+        if not movie:
+            abort(404)
+
+        try:
             movie.delete()
 
             return jsonify({
                 "success": True,
-                "message": "Movie record deletion occured",
+                "message": "Movie record deletion completed",
                 'deleted': id
             })
 
@@ -74,17 +74,17 @@ def create_app(test_config=None):
     @app.route('/actors/<int:id>', methods=['DELETE'])
 #    @requires_auth('delete:actor')
     def delete_actor(id):
+        actor = Actor.query.filter(Actor.id == id).one_or_none()
+
+        if not actor:
+            abort(404)
+
         try:
-            actor = Actor.query.filter_by(id=id).one_or_none()
-
-            if not actor:
-                abort(404)
-
             actor.delete()
 
             return jsonify({
                 "success": True,
-                "message": "Actor record deletion occured",
+                "message": "Actor record deletion completed",
                 'deleted': id
             })
 
@@ -132,16 +132,14 @@ def create_app(test_config=None):
     def post_new_actor():
         body = request.get_json()#
 
-        # In this validation, the actor's 'movie_id' has been ignored to account for budding actors who have yet to start acting in any movies.
-
-        if ((body.get('name') is None) or (body.get('age') is None) or (body.get('gender') is None)):
+        if ((body.get('name') is None) or (body.get('age') is None) or (body.get('gender') is None) or (body.get('movie_id') is None)):
             abort(422)
 
         else:
             new_name = body.get('name')
             new_age = body.get('age')
             new_gender = body.get('gender')
-            new_movie_id = body.get('movie_id', None)
+            new_movie_id = body.get('movie_id')
 
             try:
                 actor = Actor(
@@ -158,7 +156,7 @@ def create_app(test_config=None):
                 return jsonify({
                     'success': True,
                     'created': actor.id,
-                    'new_movie': new_actor.format()
+                    'new_actor': new_actor.format()
                 })
 
             except:
