@@ -25,8 +25,8 @@ def create_app(test_config=None):
     '''
 
     @app.route('/movies')
-#    @requires_auth('view:movies')
-    def get_movies():
+    @requires_auth('get:movies')
+    def get_movies(self):
         movies = Movie.query.all()
         movies = [movie.format() for movie in movies]
         for movie in movies:
@@ -38,8 +38,8 @@ def create_app(test_config=None):
         }), 200
 
     @app.route('/actors')
-#    @requires_auth('view:actors')
-    def get_actors():
+    @requires_auth('get:actors')
+    def get_actors(self):
         actors = Actor.query.all()
 
         return jsonify({
@@ -52,8 +52,8 @@ def create_app(test_config=None):
     '''
 
     @app.route('/movies/<int:id>', methods=['DELETE'])
-#    @requires_auth('delete:movie')
-    def delete_movie(id):
+    @requires_auth('delete:movies')
+    def delete_movie(self, id):
         movie = Movie.query.filter(Movie.id == id).one_or_none()
 
         if not movie:
@@ -72,8 +72,8 @@ def create_app(test_config=None):
             abort(422)
 
     @app.route('/actors/<int:id>', methods=['DELETE'])
-#    @requires_auth('delete:actor')
-    def delete_actor(id):
+    @requires_auth('delete:actors')
+    def delete_actor(self, id):
         actor = Actor.query.filter(Actor.id == id).one_or_none()
 
         if not actor:
@@ -96,8 +96,8 @@ def create_app(test_config=None):
     '''
 
     @app.route('/movies', methods=['POST'])
-#    @requires_auth('post:movie')
-    def post_new_movie():
+    @requires_auth('post:movies')
+    def post_new_movie(self):
 
         body = request.get_json()
 
@@ -128,8 +128,8 @@ def create_app(test_config=None):
                 abort(422)
 
     @app.route('/actors', methods=['POST'])
-#    @requires_auth('post:actor')
-    def post_new_actor():
+    @requires_auth('post:actors')
+    def post_new_actor(self):
         body = request.get_json()#
 
         if ((body.get('name') is None) or (body.get('age') is None) or (body.get('gender') is None) or (body.get('movie_id') is None)):
@@ -167,8 +167,8 @@ def create_app(test_config=None):
     '''
 
     @app.route('/movies/<int:id>', methods=['PATCH'])
-#    @requires_auth('patch:movies')
-    def patch_movie(id):
+    @requires_auth('patch:movies')
+    def patch_movie(self, id):
         body = request.get_json()
 
         movie = Movie.query.filter(Movie.id == id).one_or_none()
@@ -197,8 +197,8 @@ def create_app(test_config=None):
             abort(422)
 
     @app.route('/actors/<int:id>', methods=['PATCH'])
-#    @requires_auth('patch:actors')
-    def patch_actor(id):
+    @requires_auth('patch:actors')
+    def patch_actor(self, id):
         body = request.get_json()
 
         actor = Actor.query.filter(Actor.id == id).one_or_none()
