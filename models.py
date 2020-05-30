@@ -9,12 +9,11 @@ Setup the DB, using the Database URL obtained from the environment variable.
 
 
 def setup_db(app):
-    app.config["SQLALCHEMY_DATABASE_URI"] = os.environ['DATABASE_URL']
+    app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['DATABASE_URL']
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     db.app = app
     db.init_app(app)
     db.create_all()
-
 
 '''
 Movie
@@ -27,12 +26,7 @@ class Movie(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String)
     release_date = db.Column(db.Date)
-    actors = db.relationship('Actor', backref='movies', lazy=True)
-
-    def __init__(self, title, release_date, actors):
-        self.title = title
-        self.release_date = release_date
-        self.actors = actors
+    actors = db.relationship('Actor', backref='movies')
 
     def insert(self):
         db.session.add(self)
@@ -68,12 +62,6 @@ class Actor(db.Model):
     gender = db.Column(db.String)
     movie_id = db.Column(db.Integer, db.ForeignKey(
         'movies.id'), nullable=False)
-
-    def __init__(self, name, age, gender, movie_id):
-        self.name = name
-        self.age = age
-        self.gender = gender
-        self.movie_id = movie_id
 
     def insert(self):
         db.session.add(self)
