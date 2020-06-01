@@ -1,4 +1,3 @@
-
 import os
 import unittest
 import json
@@ -15,23 +14,69 @@ Casting Director - VIEW + ADD/DELETE ACTORS + PATCH ACTORS/MOVIES
 Executive Producer - ALL
 '''
 
-bearer_tokens = {
-    "casting_assistant" : "Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6InVhUk9nbjc4U1ZSSzhzZE8zcEd4NCJ9.eyJpc3MiOiJodHRwczovL2hlbmRoLWZzbmQuZXUuYXV0aDAuY29tLyIsInN1YiI6ImF1dGgwfDVlZDJlNTk4NzMwODMwMGMxZWEyMzViMSIsImF1ZCI6IkNhc3RpbmciLCJpYXQiOjE1OTA4ODAyMzQsImV4cCI6MTU5MDk2NjYzNCwiYXpwIjoiUjlEQTdjWE0xbmZmcUdtRHdyWG40VjN4emdvN2Ryc0wiLCJzY29wZSI6IiIsInBlcm1pc3Npb25zIjpbImdldDphY3RvcnMiLCJnZXQ6bW92aWVzIl19.SKwJC_6SOmh09u-FTbAaW18TG09RjNmwne7BB3FAtSX9ll7QEneWJ65y156c1uoK1FZHpN3UXLV0ZTypP_cCoLCIUyl0wbMlY0R2s3wMIfZzdmg7ezdW1lgtDSME0-2ey7LdQH0hl0w-CEPwQiWIdg_P5tC5Gqi693WwbD59CUdvaMkMEzbS8yGDRQzWGUhmXq7HSgU3i-L0p-6eTAg_SUnWnt2iHwukorET9D_LoaLiIkGZTud3nZcakQveet09IOOKejQoHWyr9-3CHhvSY7JBfu_e66zbBt4ftA1WvTT3nhTlNv_4Y3WVddYMMz5fQkhZayme0QPfVK5UUKeCIw",
-    "casting_director" : "Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6InVhUk9nbjc4U1ZSSzhzZE8zcEd4NCJ9.eyJpc3MiOiJodHRwczovL2hlbmRoLWZzbmQuZXUuYXV0aDAuY29tLyIsInN1YiI6ImF1dGgwfDVlZDJlNWJkMjE3NjE4MGMwY2ZjYWEyNyIsImF1ZCI6IkNhc3RpbmciLCJpYXQiOjE1OTA4ODAzMDgsImV4cCI6MTU5MDk2NjcwOCwiYXpwIjoiUjlEQTdjWE0xbmZmcUdtRHdyWG40VjN4emdvN2Ryc0wiLCJzY29wZSI6IiIsInBlcm1pc3Npb25zIjpbImRlbGV0ZTphY3RvcnMiLCJnZXQ6YWN0b3JzIiwiZ2V0Om1vdmllcyIsInBhdGNoOmFjdG9ycyIsInBhdGNoOm1vdmllcyIsInBvc3Q6YWN0b3JzIl19.Jta99zCY-kj_B_mdCWeGNMQ05cgyvFTFSdyctp1_F-oZTujHXcQZkUsPQfUxJPZ_Z8VPgmJc3WDiUhLPgWnYzrACRoHuRyA7knv7ZQgRwNl5awH1F6fXwcvJowSDCVjiXbzAu97D021tLP57gvMARPubh73GhNkVJr-7jif2IT4T3EAbjzCmJbp3-rDZgs2yZMF_FZ1hwIK1VhAy4UXswCtugaXEfJSoT_-k1u-qnoACsjxgF_ov93NaKMvdZzWc8vk0ofIzGxn5i-Y5bXn8yjOVQHGbDF9RMbdrTjgo2StZkU1iyrOvtKDLxt1_65HekSlAjBOgBskzCBSSoGVvHw",
-    "executive_producer" : "Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6InVhUk9nbjc4U1ZSSzhzZE8zcEd4NCJ9.eyJpc3MiOiJodHRwczovL2hlbmRoLWZzbmQuZXUuYXV0aDAuY29tLyIsInN1YiI6ImF1dGgwfDVlZDJlNWRjOGM5YjAwMGMwOGJmY2I1MiIsImF1ZCI6IkNhc3RpbmciLCJpYXQiOjE1OTA4ODAzNTIsImV4cCI6MTU5MDk2Njc1MiwiYXpwIjoiUjlEQTdjWE0xbmZmcUdtRHdyWG40VjN4emdvN2Ryc0wiLCJzY29wZSI6IiIsInBlcm1pc3Npb25zIjpbImRlbGV0ZTphY3RvcnMiLCJkZWxldGU6bW92aWVzIiwiZ2V0OmFjdG9ycyIsImdldDptb3ZpZXMiLCJwYXRjaDphY3RvcnMiLCJwYXRjaDptb3ZpZXMiLCJwb3N0OmFjdG9ycyIsInBvc3Q6bW92aWVzIl19.RK1s5LNfxMti-z2o2t9zkX1d7I6DlrX9DQIuREjVuzsZkC82q66oTUNQIRu3BwDUQkHUd8Ore3AsF8RtGhOtBNdtLuJUa3YW6r2bZa8aC393up357fIgp6SQq6DRZi-PNlu-9KCYz3-O0cNPaTwEIhc3I73nBB9RbvXcppxA72_EUOjRDJw_PImcHeRVWlZZZut-d7-YSFM-4cU-4vG0Bm5UFOScboOZQPcuK7cB8rD_ESJOfLwtgrmYulMEzKlF7vbPI5TeKVv0G7dbIBNz-yVVLnWBn9zNPS5RjRaDQ0dxufrJO7CJtdTavhDSm_4OmtdOoixgcEoPwFCXdCnIEQ"
-}
+casting_assistant_token = "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6InVhU"\
+    "k9nbjc4U1ZSSzhzZE8zcEd4NCJ9.eyJpc3MiOiJodHRwczovL"\
+    "2hlbmRoLWZzbmQuZXUuYXV0aDAuY29tLyIsInN1YiI6ImF1dG"\
+    "gwfDVlZDJlNTk4NzMwODMwMGMxZWEyMzViMSIsImF1ZCI6IkN"\
+    "hc3RpbmciLCJpYXQiOjE1OTEwMDI1NTgsImV4cCI6MTU5MTA4"\
+    "ODk1OCwiYXpwIjoiUjlEQTdjWE0xbmZmcUdtRHdyWG40VjN4e"\
+    "mdvN2Ryc0wiLCJzY29wZSI6IiIsInBlcm1pc3Npb25zIjpbIm"\
+    "dldDphY3RvcnMiLCJnZXQ6bW92aWVzIl19.LxpY0BlW_Zo7xQ"\
+    "qWrOp3hQ5_AebZS0zwrmzUJKYh9LhLSBAjfCmEep6m-F1aTOI"\
+    "WRSkS6_ZnHpIF7yfWeXPQcpOgtSlwSwqtGpZTaJDoCijrED8k"\
+    "Hw3EvkmJfn7GWQ9GnDMRMZbKA5zp2lVmfD7hcrJr1tnAomLVX"\
+    "q1Fbtc5av1vHan5C4CL5ZahSxRuYssl9oo1S4jCo9eH860tfX"\
+    "2eNJqAm_t5yWXDqhxVeG9XdWUUzxDStcw01dco-8o-60Bjd_D"\
+    "RZkArR8dwzB-UVs-G5d3FnBpimrfMfg98tjwCUwukOurzFsY4"\
+    "JXj5IT-n4kX8fRfxEGbHLL2JOTRbdFVXKQ"
+casting_director_token = "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6InVhU"\
+    "k9nbjc4U1ZSSzhzZE8zcEd4NCJ9.eyJpc3MiOiJodHRwczovL"\
+    "2hlbmRoLWZzbmQuZXUuYXV0aDAuY29tLyIsInN1YiI6ImF1dG"\
+    "gwfDVlZDJlNWJkMjE3NjE4MGMwY2ZjYWEyNyIsImF1ZCI6IkN"\
+    "hc3RpbmciLCJpYXQiOjE1OTEwMDI2MzYsImV4cCI6MTU5MTA4"\
+    "OTAzNiwiYXpwIjoiUjlEQTdjWE0xbmZmcUdtRHdyWG40VjN4e"\
+    "mdvN2Ryc0wiLCJzY29wZSI6IiIsInBlcm1pc3Npb25zIjpbIm"\
+    "RlbGV0ZTphY3RvcnMiLCJnZXQ6YWN0b3JzIiwiZ2V0Om1vdml"\
+    "lcyIsInBhdGNoOmFjdG9ycyIsInBhdGNoOm1vdmllcyIsInBv"\
+    "c3Q6YWN0b3JzIl19.m9Ib169YxWA4hNZKXTfXa16_9RLpoo4l"\
+    "_rSEQEGIn2TItRFc8GOIJ9WZSfjhiwOn9j9O6KSKBHDp9nNSt"\
+    "_b4FlIppvAQ4NH01MDh8NaQzPECxtwfDBPFd0MUKUxD_IEiTx"\
+    "GslrtA16W1dQ1nsImjDUb6nK1LMnEcsayGCOTWBgzS_a7kspP"\
+    "-5-tbn-YBYJRtfwOd2bcUOD7skCkrhEqU6JdqIppN9WeCBY7K"\
+    "AlGMZth3pffb7Es5KMvsSxW60Vnm67EBiwqt15Y_Zu9cqYnO9"\
+    "Xi3VoGg4l_QxiEm6z29LmHukakR3nIKrF5qX8oWrXTq33SThI"\
+    "05e8hjeJMk4qm_3A"
+executive_producer_token = "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6InVhU"\
+    "k9nbjc4U1ZSSzhzZE8zcEd4NCJ9.eyJpc3MiOiJodHRwczovL"\
+    "2hlbmRoLWZzbmQuZXUuYXV0aDAuY29tLyIsInN1YiI6ImF1dG"\
+    "gwfDVlZDJlNWRjOGM5YjAwMGMwOGJmY2I1MiIsImF1ZCI6IkN"\
+    "hc3RpbmciLCJpYXQiOjE1OTEwMDI2ODksImV4cCI6MTU5MTA4"\
+    "OTA4OSwiYXpwIjoiUjlEQTdjWE0xbmZmcUdtRHdyWG40VjN4e"\
+    "mdvN2Ryc0wiLCJzY29wZSI6IiIsInBlcm1pc3Npb25zIjpbIm"\
+    "RlbGV0ZTphY3RvcnMiLCJkZWxldGU6bW92aWVzIiwiZ2V0OmF"\
+    "jdG9ycyIsImdldDptb3ZpZXMiLCJwYXRjaDphY3RvcnMiLCJw"\
+    "YXRjaDptb3ZpZXMiLCJwb3N0OmFjdG9ycyIsInBvc3Q6bW92a"\
+    "WVzIl19.yB-s9WfseI6Rf-Kuib6aDfSnkUFETb0b0w3zrBez0"\
+    "IVo5_stHVnpiikjarKOLftOZwjsR5VdXJq8NEbVbpgcWi8gkm"\
+    "psLHXR24TSP3muODG5WpQGqIq4WcpuQdrhSzDqLR41fpKN4gJ"\
+    "x-hBfrIEkDdfpqlWjPBae-7EJkfJ13yug2bG0TAW-7KlxnlfH"\
+    "MIQwS9VUGuU24zBYYG4JEqXae8TmcGqHDZr0hzPJZn_TvD3cO"\
+    "9HSuxgs1WBV3Lz0LcKx_VfwHnmVKq04aPuCz8C6ZsQbI12IPD"\
+    "qvYfFz1ur4N4HZ-1XwixtDRZsj05v3QZYb1H-rzA8ax7UfNfx"\
+    "9aqZbng"
 
 casting_assistant_auth_header = {
-    'Authorization': bearer_tokens['casting_assistant']
+    'Authorization': "Bearer " + casting_assistant_token
 }
 
 casting_director_auth_header = {
-    'Authorization': bearer_tokens['casting_director']
+    'Authorization': "Bearer " + casting_director_token
 }
 
 executive_producer_auth_header = {
-    'Authorization': bearer_tokens['executive_producer']
+    'Authorization': "Bearer " + executive_producer_token
 }
+
 
 class CastingTestCase(unittest.TestCase):
 
@@ -100,42 +145,48 @@ class CastingTestCase(unittest.TestCase):
     '''
 
     def test_create_a_movie(self):
-        response = self.client().post('/movies', json=self.a_movie, headers = executive_producer_auth_header)
+        response = self.client().post('/movies', json=self.a_movie,
+                                      headers=executive_producer_auth_header)
         data = json.loads(response.data)
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(data['success'], True)
 
     def test_create_a_movie_fails_422_error(self):
-        response = self.client().post('/movies', json=self.an_invalid_movie, headers = executive_producer_auth_header)
+        response = self.client().post('/movies', json=self.an_invalid_movie,
+                                      headers=executive_producer_auth_header)
         data = json.loads(response.data)
 
         self.assertEqual(response.status_code, 422)
         self.assertEqual(data['success'], False)
 
     def test_create_a_movie_fails_401_error(self):
-        response = self.client().post('/movies', json=self.a_movie, headers = casting_director_auth_header)
+        response = self.client().post('/movies', json=self.a_movie,
+                                      headers=casting_director_auth_header)
         data = json.loads(response.data)
 
         self.assertEqual(response.status_code, 401)
         self.assertEqual(data['success'], False)
 
     def test_create_an_actor(self):
-        response = self.client().post('/actors', json=self.an_actor, headers = casting_director_auth_header)
+        response = self.client().post('/actors', json=self.an_actor,
+                                      headers=casting_director_auth_header)
         data = json.loads(response.data)
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(data['success'], True)
 
     def test_create_an_actor_fails_422_error(self):
-        response = self.client().post('/actors', json=self.an_invalid_actor, headers = casting_director_auth_header)
+        response = self.client().post('/actors', json=self.an_invalid_actor,
+                                      headers=casting_director_auth_header)
         data = json.loads(response.data)
 
         self.assertEqual(response.status_code, 422)
         self.assertEqual(data['success'], False)
 
     def test_create_an_actor_fails_401_error(self):
-        response = self.client().post('/actors', json=self.an_invalid_actor, headers = casting_assistant_auth_header)
+        response = self.client().post('/actors', json=self.an_invalid_actor,
+                                      headers=casting_assistant_auth_header)
         data = json.loads(response.data)
 
         self.assertEqual(response.status_code, 401)
@@ -147,7 +198,8 @@ class CastingTestCase(unittest.TestCase):
 
     def test_get_movies(self):
 
-        response = self.client().get('/movies', headers = casting_assistant_auth_header)
+        response = self.client().get('/movies',
+                                     headers=casting_assistant_auth_header)
         data = json.loads(response.data)
 
         self.assertEqual(response.status_code, 200)
@@ -164,7 +216,8 @@ class CastingTestCase(unittest.TestCase):
 
     def test_get_actors(self):
 
-        response = self.client().get('/actors', headers = casting_assistant_auth_header)
+        response = self.client().get('/actors',
+                                     headers=casting_assistant_auth_header)
         data = json.loads(response.data)
 
         self.assertEqual(response.status_code, 200)
@@ -184,42 +237,54 @@ class CastingTestCase(unittest.TestCase):
     '''
 
     def test_update_a_movie(self):
-        response = self.client().patch('/movies/1', json=self.an_updated_movie, headers = casting_director_auth_header)
+        response = self.client().patch('/movies/1',
+                                       json=self.an_updated_movie,
+                                       headers=casting_director_auth_header)
         data = json.loads(response.data)
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(data['success'], True)
 
     def test_update_a_movie_fails_404_error(self):
-        response = self.client().patch('/movies/444', json=self.an_updated_movie, headers = casting_director_auth_header)
+        response = self.client().patch('/movies/444',
+                                       json=self.an_updated_movie,
+                                       headers=casting_director_auth_header)
         data = json.loads(response.data)
 
         self.assertEqual(response.status_code, 404)
         self.assertEqual(data['success'], False)
 
     def test_update_a_movie_fails_401_error(self):
-        response = self.client().patch('/movies/444', json=self.an_updated_movie, headers = casting_assistant_auth_header)
+        response = self.client().patch('/movies/444',
+                                       json=self.an_updated_movie,
+                                       headers=casting_assistant_auth_header)
         data = json.loads(response.data)
 
         self.assertEqual(response.status_code, 401)
         self.assertEqual(data['success'], False)
 
     def test_update_an_actor(self):
-        response = self.client().patch('/actors/10', json=self.an_updated_actor, headers = casting_director_auth_header)
+        response = self.client().patch('/actors/1',
+                                       json=self.an_updated_actor,
+                                       headers=casting_director_auth_header)
         data = json.loads(response.data)
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(data['success'], True)
 
     def test_update_an_actor_fails_404_error(self):
-        response = self.client().patch('/actors/444', json=self.an_updated_actor, headers = casting_director_auth_header)
+        response = self.client().patch('/actors/444',
+                                       json=self.an_updated_actor,
+                                       headers=casting_director_auth_header)
         data = json.loads(response.data)
 
         self.assertEqual(response.status_code, 404)
         self.assertEqual(data['success'], False)
 
     def test_update_an_actor_fails_401_error(self):
-        response = self.client().patch('/actors/444', json=self.an_updated_actor, headers = casting_assistant_auth_header)
+        response = self.client().patch('/actors/444',
+                                       json=self.an_updated_actor,
+                                       headers=casting_assistant_auth_header)
         data = json.loads(response.data)
 
         self.assertEqual(response.status_code, 401)
@@ -236,7 +301,8 @@ class CastingTestCase(unittest.TestCase):
         movie.insert()
         movie_id = movie.id
 
-        response = self.client().delete('/movies/{}'.format(movie_id), headers = executive_producer_auth_header)
+        response = self.client().delete('/movies/{}'.format(movie_id),
+                                        headers=executive_producer_auth_header)
         data = json.loads(response.data)
 
         self.assertEqual(response.status_code, 200)
@@ -246,7 +312,8 @@ class CastingTestCase(unittest.TestCase):
 
     def test_delete_a_movie_fails_404_error(self):
 
-        response = self.client().delete('/movies/444', headers = executive_producer_auth_header)
+        response = self.client().delete(
+            '/movies/444', headers=executive_producer_auth_header)
         data = json.loads(response.data)
 
         self.assertEqual(response.status_code, 404)
@@ -254,7 +321,8 @@ class CastingTestCase(unittest.TestCase):
 
     def test_delete_a_movie_fails_401_error(self):
 
-        response = self.client().delete('/movies/444', headers = casting_director_auth_header)
+        response = self.client().delete('/movies/444',
+                                        headers=casting_director_auth_header)
         data = json.loads(response.data)
 
         self.assertEqual(response.status_code, 401)
@@ -267,7 +335,8 @@ class CastingTestCase(unittest.TestCase):
         actor.insert()
         actor_id = actor.id
 
-        response = self.client().delete('/actors/{}'.format(actor_id), headers = casting_director_auth_header)
+        response = self.client().delete('/actors/{}'.format(actor_id),
+                                        headers=casting_director_auth_header)
         data = json.loads(response.data)
 
         self.assertEqual(response.status_code, 200)
@@ -277,7 +346,8 @@ class CastingTestCase(unittest.TestCase):
 
     def test_delete_an_actor_fails_404_error(self):
 
-        response = self.client().delete('/actors/444', headers = casting_director_auth_header)
+        response = self.client().delete('/actors/444',
+                                        headers=casting_director_auth_header)
         data = json.loads(response.data)
 
         self.assertEqual(response.status_code, 404)
@@ -285,7 +355,8 @@ class CastingTestCase(unittest.TestCase):
 
     def test_delete_an_actor_fails_401_error(self):
 
-        response = self.client().delete('/actors/444', headers = casting_assistant_auth_header)
+        response = self.client().delete('/actors/444',
+                                        headers=casting_assistant_auth_header)
         data = json.loads(response.data)
 
         self.assertEqual(response.status_code, 401)

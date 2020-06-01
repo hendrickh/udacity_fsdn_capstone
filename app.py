@@ -68,7 +68,7 @@ def create_app(test_config=None):
                 'deleted': id
             })
 
-        except:
+        except Exception:
             abort(422)
 
     @app.route('/actors/<int:id>', methods=['DELETE'])
@@ -88,7 +88,7 @@ def create_app(test_config=None):
                 'deleted': id
             })
 
-        except:
+        except Exception:
             abort(422)
 
     '''
@@ -124,15 +124,18 @@ def create_app(test_config=None):
                     'new_movie': new_movie.format()
                 })
 
-            except:
+            except Exception:
                 abort(422)
 
     @app.route('/actors', methods=['POST'])
     @requires_auth('post:actors')
     def post_new_actor(self):
-        body = request.get_json()#
+        body = request.get_json()
 
-        if ((body.get('name') is None) or (body.get('age') is None) or (body.get('gender') is None) or (body.get('movie_id') is None)):
+        if ((body.get('name') is None)
+            or (body.get('age') is None)
+                or (body.get('gender') is None)
+                or (body.get('movie_id') is None)):
             abort(422)
 
         else:
@@ -159,7 +162,7 @@ def create_app(test_config=None):
                     'new_actor': new_actor.format()
                 })
 
-            except:
+            except Exception:
                 abort(422)
 
     '''
@@ -193,7 +196,7 @@ def create_app(test_config=None):
                 "message": "Movie record update completed"
             })
 
-        except:
+        except Exception:
             abort(422)
 
     @app.route('/actors/<int:id>', methods=['PATCH'])
@@ -231,7 +234,7 @@ def create_app(test_config=None):
                 "message": "Actor record update completed"
             })
 
-        except:
+        except Exception:
             abort(422)
 
     '''
